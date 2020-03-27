@@ -3,27 +3,27 @@ const Schema = mongoose.Schema;
 
 const homeworkSchema = new Schema(
   {
-    SubName: { type: String, required: true },
-    HomeworkGivenByTeacher: {
+    subName: { type: String, required: true },
+    homeworkGivenByTeacher: {
       type: Schema.Types.ObjectId,
       ref: "Teacher",
       required: true
     },
-    SectionName: {
+    sectionName: {
       type: Schema.Types.ObjectId,
       ref: "Section",
       required: true
     },
-    HomeworkDetails: { type: String, required: true },
-    DueDate: { type: Date, required: true },
-    AssignedToStudents: [
+    homeworkDetails: { type: String, required: true },
+    dueDate: { type: Date, required: true },
+    assignedToStudents: [
       {
-        Student: {
+        student: {
           type: Schema.Types.ObjectId,
           ref: "Student",
           required: true
         },
-        Status: {
+        status: {
           type: String,
           enum: ["incomplete", "complete"],
           default: "incomplete"

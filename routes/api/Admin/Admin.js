@@ -8,6 +8,8 @@ const Student = require("../../../models/Users/Student");
 const Class = require("../../../models/Class/Class");
 const Assignment = require("../../../models/Tasks/Assignment");
 const Homework = require("../../../models/Tasks/Homework");
+const Attendance = require("../../../models/Attendance/Attendance");
+
 
 // @route		GET api/admin
 // @desc		Test Route
@@ -728,18 +730,50 @@ router.delete(
 // HOMEWORK & ASSIGNMENT /////////////////////////////////////////
 
 // @route   POST api/admin/createAssignments
-// @desc    Creates an Assignment
+// @desc    Creates an Assignment with express-validator implementation 
 // @access  Public
-router.post("/createAssignments", async (req, res) => {
-  try {
+router.post("/createAssignments",
+  [
+    check("subName", "Include Subject Name")
+      .not()
+      .isEmpty(),
+    check("assignmentGivenByTeacher", "Include Teacher Id")
+      .not()
+      .isEmpty(),
+    check("sectionName", "Include Section Name")
+      .not()
+      .isEmpty(),
+    check("assignmentDetails", "Include Assignment Details")
+      .not()
+      .isEmpty(),
+    check("assignedOn", "Include assigned on date")
+      .not()
+      .isEmpty(),
+    check("dueDate", "Include due date")
+      .not()
+      .isEmpty(),
+    check("assignmentDetails", "Include Assignment Details")
+      .not()
+      .isEmpty(),
+    check("assignedToStudents", "Include Assigned to Student")
+      .not()
+      .isEmpty()   
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { subName,assignmentGivenByTeacher,sectionName,assignmentDetails,assignedOn,dueDate,assignedToStudents }=req.body;
+    try {
     // See if Assignment Exists
-    let assignment = await Assignment.find(req.body);
+    let assignment = await Assignment.find({subName,assignmentGivenByTeacher,sectionName,assignmentDetails,assignedOn,dueDate});
     if (assignment.length) {
       return res
         .status(400)
         .json({ errors: [{ msg: "Assignment already exists" }] });
     }
-    assignment = new Assignment(req.body);
+    assignment = new Assignment({subName,assignmentGivenByTeacher,sectionName,assignmentDetails,assignedOn,dueDate,assignedToStudents});
     await assignment.save();
     return res.send("assignment added successfully");
   } catch (err) {
@@ -749,12 +783,52 @@ router.post("/createAssignments", async (req, res) => {
 });
 
 // @route   POST api/admin/updateAssignments
-// @desc    Updates an Assignment for a given day and subject
+// @desc    Updates an Assignment with express-validator implementation
 // @access  Public
-router.post("/updateAssignments", async (req, res) => {
-  const { _id } = req.body;
+router.post("/updateAssignments",
+  [
+    check("_id", "Include Assignment Id")
+      .not()
+      .isEmpty(),  
+    check("subName", "Include Subject Name")
+      .not()
+      .isEmpty(),
+    check("assignmentGivenByTeacher", "Include Teacher Id")
+      .not()
+      .isEmpty(),
+    check("sectionName", "Include Section Name")
+      .not()
+      .isEmpty(),
+    check("assignmentDetails", "Include Assignment Details")
+      .not()
+      .isEmpty(),
+    check("assignedOn", "Include assigned on date")
+      .not()
+      .isEmpty(),
+    check("dueDate", "Include due date")
+      .not()
+      .isEmpty(),
+    check("assignedToStudents", "Include Assigned to Student")
+      .not()
+      .isEmpty()   
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+  const { 
+    _id,
+    subName,
+    assignmentGivenByTeacher,
+    sectionName,
+    assignmentDetails,
+    assignedOn,
+    dueDate,
+    assignedToStudents 
+  } = req.body;
   try {
-    let assignment = await Assignment.findByIdAndUpdate({ _id }, req.body);
+    let assignment = await Assignment.findByIdAndUpdate({ _id }, {subName,assignmentGivenByTeacher,sectionName,assignmentDetails,assignedOn,dueDate,assignedToStudents});
     if (assignment) {
       return res.send("assignment updated successfully");
     } else {
@@ -768,7 +842,7 @@ router.post("/updateAssignments", async (req, res) => {
 });
 
 // @route   DELETE api/admin/deleteAssignments
-// @desc    Updates an Assignment for a given day and subject
+// @desc    Deletes an Assignment based on id
 // @access  Public
 router.delete("/deleteAssignments/:id", async (req, res) => {
   const { id } = req.params;
@@ -781,7 +855,7 @@ router.delete("/deleteAssignments/:id", async (req, res) => {
       return res.send("assignment deleted successfully");
     } else {
       return res.send(
-        "No assignment to be deleted for the given day and subject"
+        "No assignment to be deleted for given id"
       );
     }
   } catch (err) {
@@ -814,16 +888,42 @@ router.get("/readAssignments", async (req, res) => {
 // @route   POST api/admin/createHomeworks
 // @desc    Creates a Homework
 // @access  Public
-router.post("/createHomeworks", async (req, res) => {
-  try {
+router.post("/createHomeworks",
+ [
+    check("subName", "Include Subject Name")
+      .not()
+      .isEmpty(),
+    check("homeworkGivenByTeacher", "Include Teacher Id")
+      .not()
+      .isEmpty(),
+    check("sectionName", "Include Section Name")
+      .not()
+      .isEmpty(),
+    check("homeworkDetails", "Include Homework Details")
+      .not()
+      .isEmpty(),
+    check("dueDate", "Include due date")
+      .not()
+      .isEmpty(),
+    check("assignedToStudents", "Include Assigned to Student")
+      .not()
+      .isEmpty()   
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { subName,homeworkGivenByTeacher,sectionName,homeworkDetails,dueDate,assignedToStudents }=req.body;
+    try {
     // See if Homework Exists
-    let homework = await Homework.find(req.body);
+    let homework = await Homework.find({ subName,homeworkGivenByTeacher,sectionName,homeworkDetails,dueDate });
     if (homework.length) {
       return res
         .status(400)
         .json({ errors: [{ msg: "Homework already exists" }] });
     }
-    homework = new Homework(req.body);
+    homework = new Homework({ subName,homeworkGivenByTeacher,sectionName,homeworkDetails,dueDate,assignedToStudents });
     await homework.save();
     return res.send("homework added successfully");
   } catch (err) {
@@ -835,10 +935,47 @@ router.post("/createHomeworks", async (req, res) => {
 // @route   POST api/admin/updateHomeworks
 // @desc    Updates a Homework for a given day and subject
 // @access  Public
-router.post("/updateHomeworks", async (req, res) => {
-  const { _id } = req.body;
+router.post("/updateHomeworks",
+  [
+    check("_id", "Include Homework Id")
+      .not()
+      .isEmpty(),  
+    check("subName", "Include Subject Name")
+      .not()
+      .isEmpty(),
+    check("homeworkGivenByTeacher", "Include Teacher Id")
+      .not()
+      .isEmpty(),
+    check("sectionName", "Include Section Name")
+      .not()
+      .isEmpty(),
+    check("homeworkDetails", "Include Homework Details")
+      .not()
+      .isEmpty(),
+    check("dueDate", "Include due date")
+      .not()
+      .isEmpty(),
+    check("assignedToStudents", "Include Assigned to Student")
+      .not()
+      .isEmpty()   
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+  const { 
+    _id,
+    subName,
+    homeworkGivenByTeacher,
+    sectionName,
+    homeworkDetails,
+    assignedOn,
+    dueDate,
+    assignedToStudents 
+  } = req.body;
   try {
-    let homework = await Homework.findByIdAndUpdate({ _id }, req.body);
+    let homework = await Homework.findByIdAndUpdate({ _id }, { subName,homeworkGivenByTeacher,sectionName,homeworkDetails,assignedOn,dueDate,assignedToStudents });
     if (homework) {
       return res.send("homework updated successfully");
     } else {
@@ -851,7 +988,7 @@ router.post("/updateHomeworks", async (req, res) => {
 });
 
 // @route   DELETE api/admin/deleteAssignments
-// @desc    Updates an Assignment for a given day and subject
+// @desc    Deletes a Homework for given id
 // @access  Public
 router.delete("/deleteHomeworks/:id", async (req, res) => {
   const { id } = req.params;
@@ -872,14 +1009,14 @@ router.delete("/deleteHomeworks/:id", async (req, res) => {
 });
 
 // @route   GET api/admin/readAssignments
-// @desc    Read Assignments with or without filter(s)
+// @desc    Read Homework with or without filter(s)
 // @access  Public
 
 router.get("/readHomeworks", async (req, res) => {
   try {
     let qdata = req.query;
 
-    // See if Assignments Exist
+    // See if Homework Exist
     let homeworks = await Homework.find(qdata);
     if (homeworks.length) {
       res.send(homeworks);
@@ -891,5 +1028,136 @@ router.get("/readHomeworks", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
+
+
+// @route   POST api/admin/createAttendance
+// @desc    Creates Attendance details for 
+// @access  Public
+router.post("/createAttendance",
+ [
+    check("sectionName", "Include Section Name")
+      .not()
+      .isEmpty(),
+    check("teacherName", "Include Teacher Id")
+      .not()
+      .isEmpty(),
+    check("date", "Include Date")
+      .not()
+      .isEmpty(),
+    check("attendanceDetails", "Include Homework Details")
+      .not()
+      .isEmpty()  
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { sectionName,teacherName,date,attendanceDetails }=req.body;
+    try {
+    // See if Attendance already exist
+    let attendance = await Attendance.find({ sectionName,teacherName,date });
+    if (attendance.length) {
+      return res
+        .status(400)
+        .json({ errors: [{ msg: "Attendance for given constraints already exists" }] });
+    }
+    attendance = new Attendance({ sectionName,teacherName,date,attendanceDetails });
+    await attendance.save();
+    return res.send("attendance added successfully");
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+// @route   POST api/admin/updateHomeworks
+// @desc    Updates a Homework for a given day and subject
+// @access  Public
+router.post("/updateAttendance",
+  [
+    check("_id", "Include Attendance Id")
+      .not()
+      .isEmpty(),  
+    check("sectionName", "Include Section Name")
+      .not()
+      .isEmpty(),
+    check("teacherName", "Include Teacher Id")
+      .not()
+      .isEmpty(),
+    check("date", "Include Date")
+      .not()
+      .isEmpty(),
+    check("attendanceDetails", "Include Attendance Details")
+      .not()
+      .isEmpty()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+  const { 
+    _id,
+    sectionName,
+    teacherName,
+    date,
+    attendanceDetails,
+  } = req.body;
+  try {
+    let attendance = await Attendance.findByIdAndUpdate({ _id }, { sectionName,teacherName,date,attendanceDetails });
+    if (attendance) {
+      return res.send("attendance updated successfully");
+    } else {
+      return res.send("No attendance to be updated for given id");
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+// @route   DELETE api/admin/deleteAttendance
+// @desc    Deletes Attendance for given id
+// @access  Public
+router.delete("/deleteAttendance/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // See if Attendance Exists
+    let attendance = await Attendance.findById(id);
+    if (attendance) {
+      attendance.deleteOne();
+      return res.send("attendance deleted successfully");
+    } else {
+      return res.send("No attendance to be deleted for given id");
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+// @route   GET api/admin/readAttendance
+// @desc    Read Attendance with or without filter(s)
+// @access  Public
+
+router.get("/readAttendance", async (req, res) => {
+  try {
+    let qdata = req.query;
+
+    // See if Attendance Exist
+    let attendance = await Attendance.find(qdata);
+    if (attendance.length) {
+      res.send(attendance);
+    } else {
+      return res.send("No attendance found for given constraints");
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
 
 module.exports = router;
