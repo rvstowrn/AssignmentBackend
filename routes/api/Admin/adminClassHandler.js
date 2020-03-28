@@ -66,7 +66,6 @@ router.post(
 // @access  Public
 router.get(
   "/viewClass",
-
   async (req, res) => {
     try {
       const queryObject = req.query;
