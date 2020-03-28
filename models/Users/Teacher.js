@@ -18,6 +18,18 @@ var teacherSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    sectionAccess:{
+        type:[
+          {  
+            sectionName: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Section",
+            required: true
+            }
+          }   
+        ],
+        default: []
+    },
     dateOfJoining: Date,
     password: {
         type: String,

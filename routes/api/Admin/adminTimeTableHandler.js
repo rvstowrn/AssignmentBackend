@@ -3,20 +3,20 @@ const bcrypt = require("bcryptjs");
 const { check, validationResult } = require("express-validator");
 const config = require("config");
 const jwt = require("jsonwebtoken");
-const Timetable = require("../../../models/Timetable/timetable");
+const Timetable = require("../../../models/Timetable/Timetable");
 
 // @route   POST api/admin/createTimetable
 // @desc    Creates Timetable with express-validator 
 // @access  Public
 router.post("/createTimetable",
- [
-    check("sectionName", "Include Section Name")
+  [
+    check("sectionName", "Include Section Id")
       .not()
       .isEmpty(),
-    check("releaseDate", "Include Teacher Id")
+    check("releaseDate", "Include Release Date")
       .not()
       .isEmpty(),
-    check("timeTable", "Include Date")
+    check("timetableDetails", "Include Timetable Details")
       .not()
       .isEmpty(),
   ],
@@ -25,7 +25,7 @@ router.post("/createTimetable",
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const { sectionName,releaseDate,timeTable }=req.body;
+    const { sectionName,releaseDate,timetableDetails }=req.body;
     try {
     // See if TimeTable already exist
     let timetable = await Timetable.find({ sectionName,releaseDate });
@@ -34,7 +34,7 @@ router.post("/createTimetable",
         .status(400)
         .json({ errors: [{ msg: "timetable for given constraints already exists" }] });
     }
-    timetable = new Timetable({ sectionName,releaseDate,timeTable });
+    timetable = new Timetable({ sectionName,releaseDate,timetableDetails });
     await timetable.save();
     return res.send("timetable added successfully");
   } catch (err) {
@@ -57,7 +57,7 @@ router.post("/updateTimetable",
     check("releaseDate", "Include Release Date")
       .not()
       .isEmpty(),
-    check("timeTable", "Include timeTable Details")
+    check("timetableDetails", "Include timeTable Details")
       .not()
       .isEmpty()
   ],
@@ -70,10 +70,10 @@ router.post("/updateTimetable",
     _id,
     sectionName,
     releaseDate,
-    timeTable,
+    timetableDetails,
   } = req.body;
   try {
-    let timetable = await Timetable.findByIdAndUpdate({ _id }, { sectionName,releaseDate,timeTable});
+    let timetable = await Timetable.findByIdAndUpdate({ _id }, { sectionName,releaseDate,timetableDetails});
     if (timetable) {
       return res.send("timetable updated successfully");
     } else {

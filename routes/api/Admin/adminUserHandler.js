@@ -5,7 +5,7 @@ const config = require("config");
 const jwt = require("jsonwebtoken");
 const Teacher = require("../../../models/Users/Teacher");
 const Student = require("../../../models/Users/Student");
-
+// 5e7fb1599f4b76181077f452
 
 // ===============================
 //          Teacher
@@ -44,6 +44,7 @@ router.post(
       accountNumber,
       photo,
       email,
+      sectionAccess,
       dateOfJoining,
       password,
       positionOfResponsibility,
@@ -69,6 +70,7 @@ router.post(
         accountNumber,
         photo,
         email,
+        sectionAccess,
         dateOfJoining,
         positionOfResponsibility,
         education,
@@ -172,6 +174,7 @@ router.put(
       accountNumber,
       photo,
       email,
+      sectionAccess,
       dateOfJoining,
       positionOfResponsibility,
       education,
@@ -197,6 +200,7 @@ router.put(
         accountNumber,
         photo,
         email,
+        sectionAccess,
         dateOfJoining,
         positionOfResponsibility,
         education,
