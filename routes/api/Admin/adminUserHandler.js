@@ -5,6 +5,8 @@ const config = require("config");
 const jwt = require("jsonwebtoken");
 const Teacher = require("../../../models/Users/Teacher");
 const Student = require("../../../models/Users/Student");
+const Section = require("../../../models/Section/Section");
+
 // 5e7fb1599f4b76181077f452
 
 // ===============================
@@ -107,13 +109,13 @@ router.post(
 );
 
 // @route   GET api/admin/viewTeacher
-// @desc    Creates a class with express-validator implementation
+// @desc    Creates a section with express-validator implementation
 // @access  Public
 router.get("/viewTeacher", async (req, res) => {
   try {
     const queryObject = req.query;
 
-    // See if Class Exists
+    // See if Section Exists
     let foundTeachers = await Teacher.find(queryObject);
     if (!foundTeachers) {
       return res.status(400).json({ errors: [{ msg: "No teacher exists" }] });
@@ -126,12 +128,12 @@ router.get("/viewTeacher", async (req, res) => {
 });
 
 // @route   GET api/admin/viewTeacher/:id
-// @desc    Creates a class with express-validator implementation
+// @desc    Creates a section with express-validator implementation
 // @access  Public
 router.get("/viewTeacher/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    // See if Class Exists
+    // See if Section Exists
     let foundTeacher = await Teacher.findById(id);
     if (!foundTeacher) {
       return res.status(400).json({ errors: [{ msg: "No Teacher exists" }] });
@@ -144,7 +146,7 @@ router.get("/viewTeacher/:id", async (req, res) => {
 });
 
 // @route   PUT api/admin/updateTeacher
-// @desc    Creates a class with express-validator implementation
+// @desc    Creates a section with express-validator implementation
 // @access  Public
 router.put(
   "/updateTeacher/:id",
@@ -222,7 +224,7 @@ router.put(
 );
 
 // @route   DELETE api/admin/deleteTeacher/:id
-// @desc    Creates a class with express-validator implementation
+// @desc    Creates a section with express-validator implementation
 // @access  Public
 router.delete(
   "/deleteTeacher/:id",
@@ -230,7 +232,7 @@ router.delete(
   async (req, res) => {
     try {
       const { id } = req.params;
-      // See if Class Exists
+      // See if Section Exists
       let deleteTeacher = await Teacher.findById(id);
       if (!deleteTeacher) {
         return res.status(400).json({ errors: [{ msg: "No teacher exists" }] });
@@ -258,7 +260,7 @@ router.post(
     check("name", "Include Name")
       .not()
       .isEmpty(),
-    check("className", "Include Class Name")
+    check("sectionName", "Include Section Name")
       .not()
       .isEmpty(),
     check("fatherName", "Father Name")
@@ -287,7 +289,7 @@ router.post(
 
     const {
       name,
-      className,
+      sectionName,
       fatherName,
       motherName,
       address,
@@ -324,13 +326,13 @@ router.post(
         SSSMID
       });
 
-      // See if class Exists
-      let foundClass = await Class.findOne({ name: className });
-      if (!foundClass) {
-        return res.status(400).json({ errors: [{ msg: "No class exists" }] });
+      // See if section Exists
+      let foundSection = await Section.findOne({ name: sectionName });
+      if (!foundSection) {
+        return res.status(400).json({ errors: [{ msg: "No section exists" }] });
       }
 
-      newStudent.class = foundClass.id;
+      newStudent.section = foundSection.id;
 
       // Encrypt Password
       const salt = await bcrypt.genSalt(10);
@@ -361,7 +363,7 @@ router.post(
 );
 
 // @route   GET api/admin/viewStudent
-// @desc    Creates a class with express-validator implementation
+// @desc    Creates a section with express-validator implementation
 // @access  Public
 router.get(
   "/viewStudent",
@@ -385,7 +387,7 @@ router.get(
 );
 
 // @route   GET api/admin/viewStudent/:id
-// @desc    Creates a class with express-validator implementation
+// @desc    Creates a section with express-validator implementation
 // @access  Public
 router.get(
   "/viewStudent/:id",
@@ -409,7 +411,7 @@ router.get(
 );
 
 // @route   PUT api/admin/updateStudent/:id
-// @desc    Creates a class with express-validator implementation
+// @desc    Creates a section with express-validator implementation
 // @access  Public
 router.put(
   "/updateStudent/:id",
@@ -417,7 +419,7 @@ router.put(
     check("name", "Include Name")
       .not()
       .isEmpty(),
-    check("className", "Include Class Name")
+    check("sectionName", "Include Section Name")
       .not()
       .isEmpty(),
     check("fatherName", "Father Name")
@@ -445,7 +447,7 @@ router.put(
 
     const {
       name,
-      className,
+      sectionName,
       fatherName,
       motherName,
       address,
@@ -481,13 +483,13 @@ router.put(
         SSSMID
       });
 
-      // See if class Exists
-      let foundClass = await Class.findOne({ name: className });
-      if (!foundClass) {
-        return res.status(400).json({ errors: [{ msg: "No class exists" }] });
+      // See if section Exists
+      let foundSection = await Section.findOne({ name: sectionName });
+      if (!foundSection) {
+        return res.status(400).json({ errors: [{ msg: "No section exists" }] });
       }
 
-      updatedStudent.class = foundClass.id;
+      updatedStudent.section = foundSection.id;
 
       // Encrypt Password
       const salt = await bcrypt.genSalt(10);
@@ -518,7 +520,7 @@ router.put(
 );
 
 // @route   DELETE api/admin/deleteStudent/:id
-// @desc    Creates a class with express-validator implementation
+// @desc    Creates a section with express-validator implementation
 // @access  Public
 router.delete(
   "/deleteStudent/:id",
@@ -526,7 +528,7 @@ router.delete(
   async (req, res) => {
     try {
       const { id } = req.params;
-      // See if Class Exists
+      // See if Section Exists
       let deleteStudent = await Student.findById(id);
       if (!deleteStudent) {
         return res.status(400).json({ errors: [{ msg: "No Student exists" }] });

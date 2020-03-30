@@ -5,9 +5,9 @@ var studentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    class: {
+    sectionName: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Class",
+        ref: "Section",
         required: true
     },
     fatherName: {

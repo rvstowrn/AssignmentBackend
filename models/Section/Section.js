@@ -17,7 +17,7 @@ var sectionSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "TimeTable"
   },
-  teachersTeachingInThisClass: [
+  teachersTeachingInThisSection: [
     {
       subject: String,
       teacherId: {
@@ -32,4 +32,4 @@ var sectionSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model("Section", sectionSchema);
+module.exports = Section = mongoose.model("Section", sectionSchema);

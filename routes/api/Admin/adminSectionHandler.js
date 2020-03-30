@@ -3,17 +3,17 @@ const bcrypt = require("bcryptjs");
 const { check, validationResult } = require("express-validator");
 const config = require("config");
 const jwt = require("jsonwebtoken");
-const Class = require("../../../models/Class/Class");
+const Section = require("../../../models/Section/Section");
 
 // ===============================
-//          Class
+//          Section
 // ===============================
 
-// @route   POST api/admin/createClass
-// @desc    Creates a class with express-validator implementation
+// @route   POST api/admin/createSection
+// @desc    Creates a section with express-validator implementation
 // @access  Public
 router.post(
-  "/createClass",
+  "/createSection",
   [
     check("name", "Include Name")
       .not()
@@ -34,26 +34,30 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, academicYear, nameInWords, totalStudents } = req.body;
+    const { name, academicYear, nameInWords,timeTable,teachersTeachingInThisSection, totalStudents } = req.body;
+
 
     try {
-      // See if Class Exists
-      let oldClass = await Class.findOne({ name });
-      if (oldClass) {
+      // See if Section Exists
+      let oldSection = await Section.findOne({ name });
+      if (oldSection) {
         return res
           .status(400)
-          .json({ errors: [{ msg: "Class already exists" }] });
+          .json({ errors: [{ msg: "Section already exists" }] });
       }
-      newClass = new Class({
+      newSection = new Section({
         name,
         academicYear,
         nameInWords,
-        totalStudents
+        timeTable,
+        teachersTeachingInThisSection,
+        totalStudents,
+
       });
 
-      await newClass.save();
+      await newSection.save();
 
-      return res.json({ msg: "Class created successfully" });
+      return res.json({ msg: "Section created successfully" });
     } catch (err) {
       console.error(err.message);
       res.status(500).send("Server error");
@@ -61,22 +65,22 @@ router.post(
   }
 );
 
-// @route   GET api/admin/viewClass
-// @desc    Creates a class with express-validator implementation
+// @route   GET api/admin/viewSection
+// @desc    Creates a section with express-validator implementation
 // @access  Public
 router.get(
-  "/viewClass",
+  "/viewSection",
   async (req, res) => {
     try {
       const queryObject = req.query;
 
-      // See if Class Exists
-      let foundClasses = await Class.find(queryObject);
-      if (!foundClasses) {
-        return res.status(400).json({ errors: [{ msg: "No class exists" }] });
+      // See if Section Exists
+      let foundSectiones = await Section.find(queryObject);
+      if (!foundSectiones.length) {
+        return res.status(400).json({ errors: [{ msg: "No section exists" }] });
       }
 
-      return res.json({ classes: foundClasses });
+      return res.json({ sectiones: foundSectiones });
     } catch (err) {
       console.error(err.message);
       res.status(500).send("Server error");
@@ -84,23 +88,23 @@ router.get(
   }
 );
 
-// @route   GET api/admin/viewClass/:id
-// @desc    Creates a class with express-validator implementation
+// @route   GET api/admin/viewSection/:id
+// @desc    Creates a section with express-validator implementation
 // @access  Public
 router.get(
-  "/viewClass/:id",
+  "/viewSection/:id",
 
   async (req, res) => {
     try {
       const { id } = req.params;
 
-      // See if Class Exists
-      let foundClass = await Class.findById(id);
-      if (!foundClass) {
-        return res.status(400).json({ errors: [{ msg: "No class exists" }] });
+      // See if Section Exists
+      let foundSection = await Section.findById(id);
+      if (!foundSection.length) {
+        return res.status(400).json({ errors: [{ msg: "No section exists" }] });
       }
 
-      return res.json({ class: foundClass });
+      return res.json({ section: foundSection });
     } catch (err) {
       console.error(err.message);
       res.status(500).send("Server error");
@@ -108,11 +112,11 @@ router.get(
   }
 );
 
-// @route   PUT api/admin/updateClass
-// @desc    Creates a class with express-validator implementation
+// @route   PUT api/admin/updateSection
+// @desc    Creates a section with express-validator implementation
 // @access  Public
 router.put(
-  "/updateClass/:id",
+  "/updateSection/:id",
   [
     check("name", "Include Name")
       .not()
@@ -137,21 +141,21 @@ router.put(
     const { id } = req.params;
 
     try {
-      // See if Class Exists
-      let oldClass = await Class.findById(id);
-      if (!oldClass) {
-        return res.status(400).json({ errors: [{ msg: "No class exists" }] });
+      // See if Section Exists
+      let oldSection = await Section.findById(id);
+      if (!oldSection) {
+        return res.status(400).json({ errors: [{ msg: "No section exists" }] });
       }
 
-      const updatedClass = await oldClass.set({
+      const updatedSection = await oldSection.set({
         name,
         academicYear,
         nameInWords,
         totalStudents
       });
-      await updatedClass.save();
+      await updatedSection.save();
 
-      return res.json({ updatedClass });
+      return res.json({ updatedSection });
     } catch (err) {
       console.error(err.message);
       res.status(500).send("Server error");
@@ -159,23 +163,23 @@ router.put(
   }
 );
 
-// @route   DELETE api/admin/deleteClass/:id
-// @desc    Creates a class with express-validator implementation
+// @route   DELETE api/admin/deleteSection/:id
+// @desc    Creates a section with express-validator implementation
 // @access  Public
 router.delete(
-  "/deleteClass/:id",
+  "/deleteSection/:id",
 
   async (req, res) => {
     try {
       const { id } = req.params;
-      // See if Class Exists
-      let deleteClass = await Class.findById(id);
-      if (!deleteClass) {
-        return res.status(400).json({ errors: [{ msg: "No class exists" }] });
+      // See if Section Exists
+      let deleteSection = await Section.findById(id);
+      if (!deleteSection) {
+        return res.status(400).json({ errors: [{ msg: "No section exists" }] });
       }
 
-      await deleteClass.deleteOne();
-      res.json({ msg: "Class deleted successfully" });
+      await deleteSection.deleteOne();
+      res.json({ msg: "Section deleted successfully" });
     } catch (err) {
       console.error(err.message);
       res.status(500).send("Server error");

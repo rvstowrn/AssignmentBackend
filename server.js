@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 
 // Define Routes
 app.use("/api/admin", require("./routes/api/Admin/adminAttendanceHandler"));
-app.use("/api/admin", require("./routes/api/Admin/adminClassHandler"));
+app.use("/api/admin", require("./routes/api/Admin/adminSectionHandler"));
 app.use("/api/admin", require("./routes/api/Admin/adminTaskHandler"));
 app.use("/api/admin", require("./routes/api/Admin/adminTimetableHandler"));
 app.use("/api/admin", require("./routes/api/Admin/adminUserHandler"));
