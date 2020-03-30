@@ -20,9 +20,9 @@ router.post(
     check("name", "Include Name")
       .not()
       .isEmpty(),
-    check("dob", "Include DOB")
-      .not()
-      .isEmpty(),
+    // check("dob", "Include DOB")
+    //   .not()
+    //   .isEmpty(),
     check("email", "Email is required")
       .not()
       .isEmpty(),
