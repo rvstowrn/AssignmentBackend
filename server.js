@@ -1,6 +1,7 @@
 const express = require("express");
 const connectDB = require("./config/db");
 const methodOverride = require("method-override");
+const cors = require('cors');
 
 const app = express();
 
@@ -12,6 +13,9 @@ app.use(express.json({ extended: false }));
 
 // App Config
 app.use(methodOverride("_method"));
+
+// App Cors
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send("JSDFLj");
