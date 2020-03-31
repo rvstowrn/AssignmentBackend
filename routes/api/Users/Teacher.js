@@ -153,7 +153,9 @@
 const router = require("express").Router();
 const { check, validationResult } = require("express-validator");
 const Attendance = require("../../../models/Attendance/Attendance");
-const Teacher = require("../../../models/Users/Teacher");;
+const Teacher = require("../../../models/Users/Teacher");
+const authTeacher = require("../../../middleware/authTeacher");
+
 
 
 // @route   POST api/teacher/createAttendance
@@ -174,6 +176,7 @@ router.post("/createAttendance",
       .not()
       .isEmpty()  
   ],
+  authTeacher, 
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -182,7 +185,7 @@ router.post("/createAttendance",
     const { sectionName,teacherName,date,attendanceDetails }=req.body;
     try {
     // Check Teacher Authority
-    let teacher = await Teacher.findById(teacherName);
+    let teacher = await Teacher.findById(req.user.user.id);
     let result = teacher.sectionAccess.find((el)=>{return el.sectionName==sectionName});
     if(!result){
       return res.status(404).json({ errors: "Unauthorized Access" });
@@ -225,6 +228,7 @@ router.post("/updateAttendance",
       .not()
       .isEmpty()
   ],
+  authTeacher,
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -239,7 +243,7 @@ router.post("/updateAttendance",
   } = req.body;
   try {
     // Check Teacher Authority
-    let teacher = await Teacher.findById(teacherName);
+    let teacher = await Teacher.findById(req.user.user.id);
     let result = teacher.sectionAccess.find((el)=>{return el.sectionName==sectionName});
     if(!result){
       return res.status(404).json({ errors: "Unauthorized Access" });
@@ -260,25 +264,27 @@ router.post("/updateAttendance",
 // @route   DELETE api/admin/deleteAttendance
 // @desc    Deletes Attendance for given id
 // @access  Public
-router.delete("/deleteAttendance/:id/:teacherName", async (req, res) => {
-  const { id, teacherName } = req.params;
+router.delete("/deleteAttendance/:id",authTeacher, 
+  async (req, res) => {
+  const { id } = req.params;
 
   try {
-    // Check Teacher Authority
-    let teacher = await Teacher.findById(teacherName);
-    let result = teacher.sectionAccess.find((el)=>{return el.sectionName==sectionName});
-    if(!result){
-      return res.status(404).json({ errors: "Unauthorized Access" });
-    }
-    
     // See if Attendance Exists
     let attendance = await Attendance.findById(id);
     if (attendance) {
+      let teacher = await Teacher.findById(req.user.user.id);
+      let result = teacher.sectionAccess.find((el)=>{return el.sectionName == attendance.sectionName.toString()});
+      console.log(result);
+      if(!result){
+      return res.status(404).json({ errors: "Unauthorized Access" });
+      }
       attendance.deleteOne();
       return res.send("attendance deleted successfully");
     } else {
       return res.send("No attendance to be deleted for given id");
     }
+    
+    
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
@@ -289,8 +295,10 @@ router.delete("/deleteAttendance/:id/:teacherName", async (req, res) => {
 // @desc    Read Attendance with or without filter(s)
 // @access  Public
 
-router.get("/readAttendance", async (req, res) => {
+router.get("/readAttendance",authTeacher,
+ async (req, res) => {
   try {
+
     let qdata = req.query;
 
     // See if Attendance Exist
