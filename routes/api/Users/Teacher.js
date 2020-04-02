@@ -2,8 +2,8 @@ const router = require("express").Router();
 const { check, validationResult } = require("express-validator");
 const Attendance = require("../../../models/Attendance/Attendance");
 const Teacher = require("../../../models/Users/Teacher");
+const Student = require("../../../models/Users/Student");
 const authTeacher = require("../../../middleware/authTeacher");
-
 
 
 // @route   POST api/teacher/createAttendance
@@ -167,7 +167,7 @@ router.get("/readAttendance",authTeacher,
 // @desc    Gets Attendance for a given section
 // @access  Public
 router.get("/viewSectionAttendance/:sectionName",
-  authTeacher, 
+  // authTeacher, 
   async (req, res) => {
   const { sectionName } = req.params;
 
@@ -175,17 +175,16 @@ router.get("/viewSectionAttendance/:sectionName",
     // See if Attendance Exists
     let attendance = await Attendance.find({sectionName:sectionName});
     if (attendance) {
-      let teacher = await Teacher.findById(req.user.user.id);
-      let result = teacher.sectionAccess.find((el)=>{return el.sectionName == sectionName});
-      if(!result){
-      return res.status(404).json({ errors: "Unauthorized Access" });
-      }
+      // let teacher = await Teacher.findById(req.user.user.id);
+      // let result = teacher.sectionAccess.find((el)=>{return el.sectionName == sectionName});
+      // if(!result){
+      // return res.status(404).json({ errors: "Unauthorized Access" });
+      // }
 
       var obj={};
       for(let i=0;i<attendance.length;i++){
-        let date = attendance[i].date; 
+        let {date, attendanceDetails} = attendance[i];
         obj[date] = {};
-        let attendanceDetails = attendance[i].attendanceDetails
         for(let j=0;j<attendanceDetails.length;j++){
           obj[date][attendanceDetails[j].student] = attendanceDetails[j].status;
         }
@@ -215,7 +214,7 @@ router.get("/viewStudentAttendance/",
 
   try {
     // See if Attendance Exists
-    let student = await Student.findById({_id:studentName}); 
+    let student = await Student.findById(studentName); 
     let sectionName = student.sectionName;
     let attendance = await Attendance.find({sectionName:sectionName,date:{$in:dates}});
     if (attendance) {

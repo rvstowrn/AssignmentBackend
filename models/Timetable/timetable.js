@@ -19,7 +19,8 @@ const timetableSchema = new Schema(
         slots: [
           {  
             subName: { 
-              type: Schema.Types.ObjectId, 
+              type: Schema.Types.ObjectId,
+              ref: "Subject", 
               required: true 
               },
             teacherTeaching: {

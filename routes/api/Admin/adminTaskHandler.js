@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const { check, validationResult } = require("express-validator");
 const config = require("config");
 const jwt = require("jsonwebtoken");
+const Subject = require("../../../models/Subject/Subject");
 const Assignment = require("../../../models/Tasks/Assignment");
 const Homework = require("../../../models/Tasks/Homework");
 

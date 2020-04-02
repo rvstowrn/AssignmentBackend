@@ -15,7 +15,7 @@ router.get("/", (req, res) => {
 // @route   Read api/students/viewAttendance
 // @desc    Gets Attendance for a given student
 // @access  Public
-router.get("/viewAttendance/",
+router.get("/viewAttendance",
   authStudent, 
   async (req, res) => {
 

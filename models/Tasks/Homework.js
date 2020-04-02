@@ -3,7 +3,11 @@ const Schema = mongoose.Schema;
 
 const homeworkSchema = new Schema(
   {
-    subName: { type: String, required: true },
+    subName: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Subject",
+        required: true
+      },
     homeworkGivenByTeacher: {
       type: Schema.Types.ObjectId,
       ref: "Teacher",

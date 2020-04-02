@@ -122,7 +122,7 @@ router.get("/readAttendance", async (req, res) => {
     let qdata = req.query;
 
     // See if Attendance Exist
-    let attendance = await Attendance.find(qdata);
+    let attendance = await Attendance.find(qdata).populate('Teacher');
     if (attendance.length) {
       res.send(attendance);
     } else {

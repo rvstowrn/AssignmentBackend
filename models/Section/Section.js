@@ -19,7 +19,11 @@ var sectionSchema = new mongoose.Schema({
   },
   teachersTeachingInThisSection: [
     {
-      subject: String,
+      subject: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Subject",
+        required: true
+      },
       teacherId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Teacher"
