@@ -1,6 +1,10 @@
 const router = require("express").Router(),
       mongoose            = require('mongoose'),
       Student             = require("../../../models/Users/Student");
+const Attendance = require("../../../models/Attendance/Attendance");
+
+// console.log(mongoose);
+
 
 // @route		GET api/student
 // @desc		Test Route
@@ -146,5 +150,53 @@ router.get("/", (req, res) => {
 //       }
 //   });
 // });
+
+
+router.get("/readAttendance/:id", async (req, res) => {
+  try {
+    let studentId = req.params.id;
+
+	let agg=await Attendance.aggregate([
+	   { $match: { date: "2019-03-25T00:00:00.000+00:00" } },
+	   { $group: { _id: "$cust_id" } }
+	])
+
+
+
+
+    // See if Attendance Exist
+    // let agg = await Attendance.aggregate([{ $match: {"attendanceDetails": {$elemMatch: { student: studentId } }}}]);
+    // [{ $match: {"attendanceDetails": {$elemMatch: { student: studentId } }}}]
+    // let agg = await Attendance.aggregate([{$where:{"date":  "2019-03-25T00:00:00.000Z"}}]);
+    // let studAttendance = await Attendance.countDocuments({"attendanceDetails": {$elemMatch: { student: studentId } }});
+    console.log(agg);
+    res.send('worked');
+}catch(e){
+	console.log(e);
+    res.send('error');
+
+}
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 module.exports = router;

@@ -315,4 +315,134 @@ router.get("/readAttendance",authTeacher,
 });
 
 
+// @route   Read api/admin/viewSectionAttendance/:id
+// @desc    Gets Attendance for a given section
+// @access  Public
+router.get("/viewSectionAttendance/:sectionName",
+  authTeacher, 
+  async (req, res) => {
+  const { sectionName } = req.params;
+
+  try {
+    // See if Attendance Exists
+    let attendance = await Attendance.find({sectionName:sectionName});
+    if (attendance) {
+      let teacher = await Teacher.findById(req.user.user.id);
+      let result = teacher.sectionAccess.find((el)=>{return el.sectionName == sectionName});
+      if(!result){
+      return res.status(404).json({ errors: "Unauthorized Access" });
+      }
+
+      var obj={};
+      for(let i=0;i<attendance.length;i++){
+        let date = attendance[i].date; 
+        obj[date] = {};
+        let attendanceDetails = attendance[i].attendanceDetails
+        for(let j=0;j<attendanceDetails.length;j++){
+          obj[date][attendanceDetails[j].student] = attendanceDetails[j].status;
+        }
+      }
+      return res.send(obj);
+    } else {
+      return res.send("No attendance to be shown");
+    }
+    
+    
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
+
+
+// @route   Read api/admin/viewStudentAttendance/:studentName
+// @desc    Gets Attendance for a given student and dates
+// @access  Public
+router.get("/viewStudentAttendance/",
+  authTeacher, 
+  async (req, res) => {
+
+  const { studentName, dates } = req.body;
+
+  try {
+    // See if Attendance Exists
+    let student = await Student.findById({_id:studentName}); 
+    let sectionName = student.sectionName;
+    let attendance = await Attendance.find({sectionName:sectionName,date:{$in:dates}});
+    if (attendance) {
+      let teacher = await Teacher.findById(req.user.user.id);
+      let result = teacher.sectionAccess.find((el)=>{return el.sectionName == sectionName});
+      if(!result){
+      return res.status(404).json({ errors: "Unauthorized Access" });
+      }
+
+      var obj={};
+      for(let i=0;i<attendance.length;i++){
+        let { date,attendanceDetails } = attendance[i];
+        let s = attendanceDetails.find((el)=>{return el.student == studentName});;
+        obj[date] = s.status; 
+      }
+      return res.send(obj);
+    } else {
+      return res.send("No attendance to be shown");
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module.exports = router;
