@@ -4,6 +4,7 @@ const { check, validationResult } = require("express-validator");
 const config = require("config");
 const jwt = require("jsonwebtoken");
 const Timetable = require("../../../models/Timetables/Timetables");
+const Section = require("../../../models/Section/Section");
 
 // @route   POST api/admin/createTimetable
 // @desc    Creates Timetable with express-validator 
@@ -36,6 +37,8 @@ router.post("/createTimetable",
     }
     timetable = new Timetable({ sectionName,releaseDate,timetableDetails });
     await timetable.save();
+    let sec = await Section.findByIdAndUpdate(sectionName,{timetable:timetable._id});
+
     return res.send("timetable added successfully");
   } catch (err) {
     console.error(err.message);
@@ -115,7 +118,7 @@ router.get("/readTimetable", async (req, res) => {
     let qdata = req.query;
 
     // See if Attendance Exist
-    let timetable = await Timetable.find(qdata);
+    let timetable = await Timetable.find(qdata).populate('timetableDetails.slots.teacherTeaching');
     if (timetable.length) {
       res.send(timetable);
     } else {

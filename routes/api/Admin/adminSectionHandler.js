@@ -75,7 +75,7 @@ router.get(
       const queryObject = req.query;
 
       // See if Section Exists
-      let foundSectiones = await Section.find(queryObject);
+      let foundSectiones = await Section.find(queryObject).populate('teachersTeachingInThisSection.teacherId');
       if (!foundSectiones.length) {
         return res.status(400).json({ errors: [{ msg: "No section exists" }] });
       }
@@ -99,7 +99,7 @@ router.get(
       const { id } = req.params;
 
       // See if Section Exists
-      let foundSection = await Section.findById(id);
+      let foundSection = await Section.findById(id).populate('teachersTeachingInThisSection.teacherId');
       if (!foundSection.length) {
         return res.status(400).json({ errors: [{ msg: "No section exists" }] });
       }

@@ -13,9 +13,9 @@ var sectionSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  timeTable: {
+  timetable: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "TimeTable"
+    ref: "Timetable"
   },
   teachersTeachingInThisSection: [
     {

@@ -19,7 +19,7 @@ router.post("/createAttendance",
     check("date", "Include Date")
       .not()
       .isEmpty(),
-    check("attendanceDetails", "Include Homework Details")
+    check("attendanceDetails", "Include Attendance Details")
       .not()
       .isEmpty()  
   ],
@@ -122,7 +122,7 @@ router.get("/readAttendance", async (req, res) => {
     let qdata = req.query;
 
     // See if Attendance Exist
-    let attendance = await Attendance.find(qdata).populate('Teacher');
+    let attendance = await Attendance.find(qdata).populate('teacherName');
     if (attendance.length) {
       res.send(attendance);
     } else {

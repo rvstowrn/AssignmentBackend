@@ -155,7 +155,7 @@ router.get("/readAssignments", async (req, res) => {
     let qdata = req.query;
 
     // See if Assignments Exist
-    let assignments = await Assignment.find(qdata);
+    let assignments = await Assignment.find(qdata).populate('assignmentGivenByTeacher');
     if (assignments.length) {
       res.send(assignments);
     } else {
@@ -299,7 +299,7 @@ router.get("/readHomeworks", async (req, res) => {
     let qdata = req.query;
 
     // See if Homework Exist
-    let homeworks = await Homework.find(qdata);
+    let homeworks = await Homework.find(qdata).populate('homeworkGivenByTeacher');
     if (homeworks.length) {
       res.send(homeworks);
     } else {
