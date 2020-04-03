@@ -22,16 +22,16 @@ app.get("/", (req, res) => {
 });
 
 // Define Routes
-app.use("/api/admin", require("./routes/api/Admin/adminAttendanceHandler"));
-app.use("/api/admin", require("./routes/api/Admin/adminSectionHandler"));
-app.use("/api/admin", require("./routes/api/Admin/adminTaskHandler"));
-app.use("/api/admin", require("./routes/api/Admin/adminTimetableHandler"));
-app.use("/api/admin", require("./routes/api/Admin/adminUserHandler"));
-app.use("/api/admin", require("./routes/api/Admin/adminSubjectHandler"));
+// app.use("/api/admin", require("./routes/api/Admin/adminAttendanceHandler"));
+// app.use("/api/admin", require("./routes/api/Admin/adminSectionHandler"));
+// app.use("/api/admin", require("./routes/api/Admin/adminTaskHandler"));
+// app.use("/api/admin", require("./routes/api/Admin/adminTimetableHandler"));
+// app.use("/api/admin", require("./routes/api/Admin/adminUserHandler"));
+// app.use("/api/admin", require("./routes/api/Admin/adminSubjectHandler"));
 
-app.use("/api/students", require("./routes/api/Users/Student"));
-app.use("/api/teachers", require("./routes/api/Users/Teacher"));
-app.use("/api/auth", require("./routes/api/auth"));
+// app.use("/api/students", require("./routes/api/Users/Student"));
+// app.use("/api/teachers", require("./routes/api/Users/Teacher"));
+// app.use("/api/auth", require("./routes/api/auth"));
 
 const PORT = process.env.PORT || 5000;
 
