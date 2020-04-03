@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const config = require("config");
 // const db = config.get("mongoURI");
-const db = "mongodb://127.0.0.1:27017/medicaps";
+const db = "mongodb+srv://rishabh:cse300531@cluster0-amnhk.mongodb.net/test?retryWrites=true&w=majority";
 
 const connectDB = async () => {
   try {
