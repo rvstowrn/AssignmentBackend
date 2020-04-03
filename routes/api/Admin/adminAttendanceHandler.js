@@ -192,16 +192,19 @@ router.get("/viewStudentAttendance/:studentName",
 
       var obj={};
       var obm={};
+      var totalDaysAMonth={};
+
       for(let i=0;i<attendance.length;i++){
         let { date,attendanceDetails } = attendance[i];
         let s = attendanceDetails.find((el)=>{return el.student == studentName});;
+        totalDaysAMonth[date.getMonth()] = (totalDaysAMonth[date.getMonth()] || 0)+1;
         obj[date] = s.status;
         if(s.status=="present")         
-        obm[date.getMonth] = (obm[date.getMonth] || 0)+1;
+        obm[date.getMonth()] = (obm[date.getMonth] || 0)+1;
         else
-        obm[date.getMonth] = (obm[date.getMonth] || 0);  
+        obm[date.getMonth()] = (obm[date.getMonth] || 0);  
       }
-      return res.send({perdate:obj,permonth:obm});
+      return res.send({perdate:obj,permonth:obm,totalDaysAMonth:totalDaysAMonth});
     } else {
       return res.send("No attendance to be shown");
     }
@@ -210,23 +213,6 @@ router.get("/viewStudentAttendance/:studentName",
     res.status(500).send("Server error");
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 module.exports = router;
