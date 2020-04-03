@@ -5,33 +5,33 @@ const cors = require('cors');
 
 const app = express();
 
-// // Connect Database
-// connectDB();
+// Connect Database
+connectDB();
 
-// // Init Middlewares
-// app.use(express.json({ extended: false }));
+// Init Middlewares
+app.use(express.json({ extended: false }));
 
-// // App Config
-// app.use(methodOverride("_method"));
+// App Config
+app.use(methodOverride("_method"));
 
-// // App Cors
-// app.use(cors());
+// App Cors
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send("JSDFLj");
 });
 
-// // Define Routes
-// app.use("/api/admin", require("./routes/api/Admin/adminAttendanceHandler"));
-// app.use("/api/admin", require("./routes/api/Admin/adminSectionHandler"));
-// app.use("/api/admin", require("./routes/api/Admin/adminTaskHandler"));
-// app.use("/api/admin", require("./routes/api/Admin/adminTimetableHandler"));
-// app.use("/api/admin", require("./routes/api/Admin/adminUserHandler"));
-// app.use("/api/admin", require("./routes/api/Admin/adminSubjectHandler"));
+// Define Routes
+app.use("/api/admin", require("./routes/api/Admin/adminAttendanceHandler"));
+app.use("/api/admin", require("./routes/api/Admin/adminSectionHandler"));
+app.use("/api/admin", require("./routes/api/Admin/adminTaskHandler"));
+app.use("/api/admin", require("./routes/api/Admin/adminTimetableHandler"));
+app.use("/api/admin", require("./routes/api/Admin/adminUserHandler"));
+app.use("/api/admin", require("./routes/api/Admin/adminSubjectHandler"));
 
-// app.use("/api/students", require("./routes/api/Users/Student"));
-// app.use("/api/teachers", require("./routes/api/Users/Teacher"));
-// app.use("/api/auth", require("./routes/api/auth"));
+app.use("/api/students", require("./routes/api/Users/Student"));
+app.use("/api/teachers", require("./routes/api/Users/Teacher"));
+app.use("/api/auth", require("./routes/api/auth"));
 
 const PORT = process.env.PORT || 5000;
 

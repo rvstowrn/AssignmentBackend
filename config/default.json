@@ -1,4 +1,5 @@
 {
   "mongoURI": "mongodb+srv://rishabh:cse300531@cluster0-amnhk.mongodb.net/test?retryWrites=true&w=majority",
-  "jwtSecret": "lkasjdfloioainvaoisdjfoiajsdf"
+  "jwtSecret": "lkasjdfloioainvaoisdjfoiajsdf",
+  "production": {"port" : 10010}
 }
