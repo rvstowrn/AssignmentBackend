@@ -38,5 +38,5 @@ const timetableSchema = new Schema(
   { strict: true }
 );
 
-const Timetable = mongoose.model("timetable", timetableSchema);
+const Timetable = mongoose.model("Timetable", timetableSchema);
 module.exports = Timetable;
