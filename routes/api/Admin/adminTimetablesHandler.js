@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const { check, validationResult } = require("express-validator");
 const config = require("config");
 const jwt = require("jsonwebtoken");
-const Timetable = require("../../../models/Timetable/Timetable");
+const Timetable = require("../../../models/Timetables/Timetables");
 
 // @route   POST api/admin/createTimetable
 // @desc    Creates Timetable with express-validator 
