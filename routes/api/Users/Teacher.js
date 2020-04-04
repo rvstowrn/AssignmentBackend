@@ -164,73 +164,52 @@ router.get("/readAttendance",authTeacher,
 });
 
 
-// // @route   GET api/admin/viewSection
-// // @desc    Creates a section with express-validator implementation
-// // @access  Public
-// router.get(
-//   "/viewSection",
-//   async (req, res) => {
-//     try {
-//       // Query params should assume different names than actual mongoose model fields
-//       const queryObject = req.query;
 
-//       // See if Section Exists
-//       let foundSectiones = await Section.find(queryObject).populate('teachersTeachingInThisSection.teacherId');
-//       if (!foundSectiones.length) {
-//         return res.status(400).json({ errors: [{ msg: "No section exists" }] });
-//       }
+// @route   Read api/teachers/viewSectionAttendance 
+// @desc    Gets Attendance for a given section
+// @access  Public
+router.get("/viewSectionAttendance/:sectionName/:month/:academicYear",
+  authTeacher,
+  async (req, res) => {
+  const { sectionName,month,academicYear } = req.params;
 
-//       return res.json({ sections: foundSectiones });
-//     } catch (err) {
-//       console.error(err.message);
-//       res.status(500).send("Server error");
-//     }
-//   }
-// );
-
-
-// // @route   Read api/teachers/viewSectionAttendance 
-// // @desc    Gets Attendance for a given section
-// // @access  Public
-// router.get("/viewSectionAttendance/:sectionName/:month/:academicYear",
-//   authTeacher,
-//   async (req, res) => {
-//   const { sectionName,month,academicYear } = req.params;
-
-//   try {
-//     // Check validity if sectionName and month spelling and academicYear validness
-//     let teacher = await Teacher.findById(req.user.user.id);
-//       let result = teacher.sectionAccess.find((el)=>{return el.sectionName == attendance.sectionName.toString()});
-//       console.log(result);
-//       if(!result){
-//       return res.status(404).json({ errors: "Unauthorized Access" });
-//       }  
-//     var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-//     let attendancemod = await Attendance.find({sectionName});
-//     console.log(attendancemod);
-//     let attendances = attendancemod.filter(el => { return (el.date.getMonth() == months.indexOf(month) && el.date.getFullYear()==academicYear);});
-//     if (attendances || attendances.length) {
-//       var obj={};
-//       attendances[0].attendanceDetails.forEach(el=>{
-//         obj[el.student]=[];
-//       });
-
-//       attendances.forEach(attendance=>{
-//         let {date, attendanceDetails} = attendance;
-//         attendanceDetails.forEach(el=>{
-//           obj[el.student].push({date:date.getDate(),status:el.status});
-//         });
-//       });
-//       return res.send(obj);
-//     } else {
-//       return res.send("No attendance to be shown");
-//     }
+  try {
+    // Check validity if sectionName and month spelling and academicYear validness
     
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send("Server error");
-//   }
-// });
+    // Check Teacher Authority
+    let teacher = await Teacher.findById(req.user.user.id);
+    let result = teacher.sectionAccess.find((el)=>{return el.sectionName==sectionName});
+    if(!result){
+      return res.status(404).json({ errors: "Unauthorized Access" });
+    }
+
+
+
+    var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    let attendancemod = await Attendance.find({sectionName});
+    let attendances = attendancemod.filter(el => { return (el.date.getMonth() == months.indexOf(month) && el.date.getFullYear()==academicYear);});
+    if (attendances || attendances.length) {
+      var obj={};
+      attendances[0].attendanceDetails.forEach(el=>{
+        obj[el.student]=[];
+      });
+
+      attendances.forEach(attendance=>{
+        let {date, attendanceDetails} = attendance;
+        attendanceDetails.forEach(el=>{
+          obj[el.student].push({date:date.getDate(),status:el.status});
+        });
+      });
+      return res.send(obj);
+    } else {
+      return res.send("No attendance to be shown");
+    }
+    
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
 
 
 
