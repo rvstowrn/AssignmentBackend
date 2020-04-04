@@ -169,12 +169,14 @@ router.get("/timetableForStudents/:studentId", async (req, res) => {
       timetable.timetableDetails.forEach(detail=>{
         var obj={};
         obj['dayName']=detail.dayName;
-        obj['slots']=[];
+        obj['slots']=[]; 
         detail.slots.forEach(slot=>{
-          obj['sectionName']=timetable.sectionName;
-          obj['subName']=slot.subName.name;
-          obj['startTime']=slot.startTime;
-          obj['endTime']=slot.endTime;
+          obx={};
+          obx['sectionName']=timetable.sectionName;
+          obx['subName']=slot.subName.name;
+          obx['startTime']=slot.startTime;
+          obx['endTime']=slot.endTime;
+          obj['slots'].push(obx);
         });
         arr.push(obj);
       });
