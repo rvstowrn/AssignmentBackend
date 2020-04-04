@@ -207,7 +207,7 @@ router.get("/viewAttendanceOfAcademicYear/:studentId/:academicYear",
       
       attendances.forEach(attendance => {
         let { date,attendanceDetails } = attendance;
-        let s = attendanceDetails.find((el)=>{return el.student == studentName});
+        let s = attendanceDetails.find((el)=>{return el.student == studentId});
         if(date.getFullYear() == academicYear)
         obj[month[date.getMonth()]].push({date:date.getDate(),status:s.status});
       });
