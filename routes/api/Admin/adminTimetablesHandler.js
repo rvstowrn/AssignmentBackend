@@ -163,7 +163,40 @@ router.get("/timetableForStudents/:studentId", async (req, res) => {
     // check if student exists
     let { studentId } = req.params;
     var student = await Student.findById(studentId);
-    let timetable = await Timetable.findOne({sectionName:student.sectionName});
+    let timetable = await Timetable.findOne({sectionName:student.sectionName}).populate('subName');
+    if (timetable) {
+      var arr=[];
+      timetable.timetableDetails.forEach(detail=>{
+        var obj={};
+        obj['dayName']=detail.dayName;
+        obj['slots']=[];
+        detail.slots.forEach(slot=>{
+          obj['sectionName']=timetable.sectionName;
+          obj['subName']=slot.subName.name;
+          obj['startTime']=slot.startTime;
+          obj['endTime']=slot.endTime;
+        });
+        arr.push(obj);
+      });
+      return res.send(arr);
+    } else {
+      return res.send("Timetable not set");
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+
+
+
+router.get("/timetableForTeachers/:teacherId", async (req, res) => {
+  try {
+    // check if teacher exists
+    let { teacherId } = req.params;
+    var teacher = await Teacher.findById(teacherId);
+    let timetable = await Timetable.find({teacherTeaching:teacherId});
     if (timetable) {
       var arr=[];
       timetable.timetableDetails.forEach(detail=>{
