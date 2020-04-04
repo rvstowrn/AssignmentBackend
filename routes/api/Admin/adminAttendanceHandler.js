@@ -5,9 +5,10 @@ const config = require("config");
 const jwt = require("jsonwebtoken");
 const Attendance = require("../../../models/Attendance/Attendance");
 const Student = require("../../../models/Users/Student");
+const Teacher = require("../../../models/Users/Teacher");
 
 // @route   POST api/admin/createAttendance
-// @desc    Creates Attendance details for 
+// @desc    Creates Attendance for given date and section 
 // @access  Public
 router.post("/createAttendance",
  [
@@ -31,12 +32,15 @@ router.post("/createAttendance",
     }
     const { sectionName,teacherName,date,attendanceDetails }=req.body;
     try {
+    // Check if section,teacher and students exist with student belonging to given section       
+    //Check teacher authority  
+
     // See if Attendance already exist
-    let attendance = await Attendance.find({ sectionName,teacherName,date });
+    let attendance = await Attendance.find({ sectionName,date });
     if (attendance.length) {
       return res
         .status(400)
-        .json({ errors: [{ msg: "Attendance for given constraints already exists" }] });
+        .json({ errors: [{ msg: "Attendance for given section and date" }] });
     }
     attendance = new Attendance({ sectionName,teacherName,date,attendanceDetails });
     await attendance.save();
@@ -47,8 +51,8 @@ router.post("/createAttendance",
   }
 });
 
-// @route   POST api/admin/updateHomeworks
-// @desc    Updates a Homework for a given day and subject
+// @route   POST api/admin/updateAttendance
+// @desc    Updates an Attendance for a given day and subject
 // @access  Public
 router.post("/updateAttendance",
   [
@@ -81,6 +85,9 @@ router.post("/updateAttendance",
     attendanceDetails,
   } = req.body;
   try {
+    // Check if section,teacher and students exist with student belonging to given section       
+    // Do something to stop more docs in case of update param date and section already exist 
+
     let attendance = await Attendance.findByIdAndUpdate({ _id }, { sectionName,teacherName,date,attendanceDetails });
     if (attendance) {
       return res.send("attendance updated successfully");
@@ -120,12 +127,13 @@ router.delete("/deleteAttendance/:id", async (req, res) => {
 
 router.get("/readAttendance", async (req, res) => {
   try {
+    //Only allow selected query params
     let qdata = req.query;
 
     // See if Attendance Exist
     let attendance = await Attendance.find(qdata).populate('teacherName');
     if (attendance.length) {
-      res.send(attendance);
+      res.send({attendances:attendance});
     } else {
       return res.send("No attendance found for given constraints");
     }
@@ -137,34 +145,35 @@ router.get("/readAttendance", async (req, res) => {
 
 
 
-
-
 // @route   Read api/admin/viewSectionAttendance/:id
 // @desc    Gets Attendance for a given section
 // @access  Public
-router.get("/viewSectionAttendance/:sectionName/:month",
+router.get("/viewSectionAttendance/:sectionName/:month/:academicYear",
   async (req, res) => {
-  const { sectionName,month } = req.params;
+  const { sectionName,month,academicYear } = req.params;
 
   try {
-    // See if Attendance Exists
-    let attendance = await Attendance.find({sectionName:sectionName,"date": {"$gte": new Date(2019,parseInt(month), 1), "$lt": new Date(2019,parseInt(month), 31)}});
-    if (attendance.length) {
-      var obs={};
+    // Check validity if sectionName and month spelling and academicYear validness
+      
+    var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    let gteDate = new Date(parseInt(academicYear),months.indexOf(month),1);
+    let lteDate = new Date(parseInt(academicYear),months.indexOf(month),31);
+    
+    let attendances = await Attendance.find({sectionName:sectionName,"date": {"$gte":gteDate,"$lte":lteDate}});
+  
+    if (attendances.length) {
       var obj={};
-      var totalDates = attendance.length; 
-      for(let i=0;i<attendance.length;i++){
-        let {date, attendanceDetails} = attendance[i];
-        obj[date] = {};
-        for(let j=0;j<attendanceDetails.length;j++){
-          obj[date][attendanceDetails[j].student] = attendanceDetails[j].status;
-          if(attendanceDetails[j].status == "present")
-          obs[attendanceDetails[j].student] = (obs[attendanceDetails[j].student] || 0) + 1;
-          else
-          obs[attendanceDetails[j].student] = (obs[attendanceDetails[j].student] || 0);  
-        }
-      }
-      return res.send({datestudentobj:obj,studentobj:obs,total:totalDates});
+      attendances[0].attendanceDetails.forEach(el=>{
+        obj[el.student]=[];
+      });
+
+      attendances.forEach(attendance=>{
+        let {date, attendanceDetails} = attendance;
+        attendanceDetails.forEach(el=>{
+          obj[el.student].push({date:date.getDate(),status:el.status});
+        });
+      });
+      return res.send(obj);
     } else {
       return res.send("No attendance to be shown");
     }
@@ -175,36 +184,36 @@ router.get("/viewSectionAttendance/:sectionName/:month",
   }
 });
 
-// @route   Read api/admin/viewStudentAttendance/:studentName
-// @desc    Gets Attendance for a given student and dates
+
+// @route   Read api/admin/viewAttendanceOfAcademicYear/:studentId/:academicYear
+// @desc    Gets Attendance for a given student and academic year
 // @access  Public
-router.get("/viewStudentAttendance/:studentName",
+router.get("/viewAttendanceOfAcademicYear/:studentId/:academicYear",
   async (req, res) => {
 
-  const { studentName } = req.params;
+  const { studentId, academicYear } = req.params;
 
   try {
-    // See if Attendance Exists
-    let student = await Student.findById(studentName); 
+    //Check student id existence and valid academic year
+    
+    let student = await Student.findById(studentId); 
     let sectionName = student.sectionName;
-    let attendance = await Attendance.find({sectionName:sectionName});
-    if (attendance) {
-
-      var obj={};
-      var obm={};
-      var totalDaysAMonth={};
-
-      for(let i=0;i<attendance.length;i++){
-        let { date,attendanceDetails } = attendance[i];
-        let s = attendanceDetails.find((el)=>{return el.student == studentName});;
-        totalDaysAMonth[date.getMonth()] = (totalDaysAMonth[date.getMonth()] || 0)+1;
-        obj[date] = s.status;
-        if(s.status=="present")         
-        obm[date.getMonth()] = (obm[date.getMonth] || 0)+1;
-        else
-        obm[date.getMonth()] = (obm[date.getMonth] || 0);  
-      }
-      return res.send({perdate:obj,permonth:obm,totalDaysAMonth:totalDaysAMonth});
+    let attendances = await Attendance.find({ sectionName });
+    if (attendances.length) {
+      var obj={"name":student.name};
+      var month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+      
+      month.forEach(m => { 
+        obj[m]=[]; 
+      });
+      
+      attendances.forEach(attendance => {
+        let { date,attendanceDetails } = attendance;
+        let s = attendanceDetails.find((el)=>{return el.student == studentName});
+        if(date.getFullYear() == academicYear)
+        obj[month[date.getMonth()]].push({date:date.getDate(),status:s.status});
+      });
+      return res.send(obj);
     } else {
       return res.send("No attendance to be shown");
     }

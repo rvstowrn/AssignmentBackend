@@ -9,7 +9,7 @@ var teacherSchema = new mongoose.Schema({
     address: String,
     dob: {
         type: Date,
-        // required: true
+        required: true
     },
     aadharNumber: String,
     accountNumber: String,

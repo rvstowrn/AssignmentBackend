@@ -15,30 +15,30 @@ router.get("/", (req, res) => {
 // @route   Read api/students/viewAttendance
 // @desc    Gets Attendance for a given student
 // @access  Public
-router.get("/viewAttendance",
-  authStudent, 
-  async (req, res) => {
+// router.get("/viewAttendance",
+//   authStudent, 
+//   async (req, res) => {
 
-  try {
-    // See if Attendance Exists
-    let student = await Student.findById(req.user.user.id); 
-    let sectionName = student.sectionName;
-    let attendance = await Attendance.find({sectionName:sectionName});
-    if (attendance) {
-      var obj={};
-      for(let i=0;i<attendance.length;i++){
-        let { date,attendanceDetails } = attendance[i];
-        let s = attendanceDetails.find((el)=>{return el.student == studentName});;
-        obj[date] = s.status; 
-      }
-      return res.send(obj);
-    } else {
-      return res.send("No attendance to be shown");
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
-  }
-});
+//   try {
+//     // See if Attendance Exists
+//     let student = await Student.findById(req.user.user.id); 
+//     let sectionName = student.sectionName;
+//     let attendance = await Attendance.find({sectionName:sectionName});
+//     if (attendance) {
+//       var obj={};
+//       for(let i=0;i<attendance.length;i++){
+//         let { date,attendanceDetails } = attendance[i];
+//         let s = attendanceDetails.find((el)=>{return el.student == studentName});;
+//         obj[date] = s.status; 
+//       }
+//       return res.send(obj);
+//     } else {
+//       return res.send("No attendance to be shown");
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Server error");
+//   }
+// });
 
 module.exports = router;

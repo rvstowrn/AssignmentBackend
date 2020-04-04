@@ -167,6 +167,10 @@ router.get("/readAssignments", async (req, res) => {
   }
 });
 
+// Make route /subjectsAssignmentForStudent/:studentId
+
+
+
 // @route   POST api/admin/createHomeworks
 // @desc    Creates a Homework
 // @access  Public
@@ -296,6 +300,7 @@ router.delete("/deleteHomeworks/:id", async (req, res) => {
 
 router.get("/readHomeworks", async (req, res) => {
   try {
+    // query params != mongoose fields , id casting handle, selected params
     let qdata = req.query;
 
     // See if Homework Exist
@@ -311,7 +316,30 @@ router.get("/readHomeworks", async (req, res) => {
   }
 });
 
-
-
+router.get("/subjectsHomeWorkForStudent/:studentId", async (req, res) => {
+  try {
+    // Check if the student exist
+    const { studentId } = req.params;
+    let homeworks = await Homework.find({student:studentId})
+    .populate('homeworkGivenByTeacher')
+    .populate('sectionName')
+    .populate('subName');
+    if (homeworks.length) {
+      let arr = [];
+      homeworks.forEach(homework => {
+        let {subName,sectionName,homeworkGivenByTeacher,homeworkDetails,dueDate,assignedToStudents} = homework;
+        let s = assignedToStudents.find(el => {return el.student == studentId});
+        arr.push({subName: homework.subName.name,sectionName:sectionName.name,homeworkGivenByTeacher:homeworkGivenByTeacher.name,
+          homeworkDetails:homeworkDetails,dueDate:dueDate,status:s.status});
+      });
+      return res.send(arr);
+    } else {
+      return res.send("No homework found for given student");
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
 
 module.exports = router;

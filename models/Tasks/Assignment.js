@@ -41,5 +41,4 @@ const assignmentSchema = new Schema(
   { strict: true }
 );
 
-const Assignment = mongoose.model("Assignment", assignmentSchema);
-module.exports = Assignment;
+module.exports = Assignment = mongoose.model("Assignment", assignmentSchema);

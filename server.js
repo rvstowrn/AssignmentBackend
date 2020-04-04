@@ -25,7 +25,6 @@ app.get("/", (req, res) => {
 app.use("/api/admin", require("./routes/api/Admin/adminAttendanceHandler"));
 app.use("/api/admin", require("./routes/api/Admin/adminSectionHandler"));
 app.use("/api/admin", require("./routes/api/Admin/adminTaskHandler"));
-
 app.use("/api/admin", require("./routes/api/Admin/adminTimetablesHandler"));
 app.use("/api/admin", require("./routes/api/Admin/adminUserHandler"));
 app.use("/api/admin", require("./routes/api/Admin/adminSubjectHandler"));

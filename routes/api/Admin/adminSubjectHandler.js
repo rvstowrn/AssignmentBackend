@@ -19,6 +19,7 @@ router.post("/createSubject",
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
+    // Check for validity of sections
     const { name,subCode,sections }=req.body;
     try {
     // See if Subject already exist
@@ -26,7 +27,7 @@ router.post("/createSubject",
     if (subject.length) {
       return res
         .status(400)
-        .json({ errors: [{ msg: "subject for given constraints already exists" }] });
+        .json({ errors: [{ msg: "subject for given name already exists" }] });
     }
     subject = new Subject({ name,subCode,sections });
     await subject.save();
@@ -76,7 +77,7 @@ router.post("/updateSubject",
   }
 });
 
-// @route   DELETE api/admin/deleteSubject
+// @route   DELETE api/admin/deleteSubject/:id
 // @desc    Deletes Subject for given id
 // @access  Public
 router.delete("/deleteSubject/:id", async (req, res) => {
@@ -103,6 +104,8 @@ router.delete("/deleteSubject/:id", async (req, res) => {
 
 router.get("/readSubject", async (req, res) => {
   try {
+    // ids should be tested to prevent id casting errors
+    // query params should be different from actual mongoose model fields and should be selected
     let qdata = req.query;
 
     // See if Attendance Exist

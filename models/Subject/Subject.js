@@ -11,6 +11,7 @@ const subjectSchema = new Schema(
             sectionName: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Section",
+            required: true
             }
           }   
         ],
@@ -20,5 +21,4 @@ const subjectSchema = new Schema(
   { strict: true }
 );
 
-const Subject = mongoose.model("Subject", subjectSchema);
-module.exports = Subject;
+module.exports = Subject = mongoose.model("Subject", subjectSchema);
