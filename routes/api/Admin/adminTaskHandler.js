@@ -320,10 +320,11 @@ router.get("/subjectsHomeWorkForStudent/:studentId", async (req, res) => {
   try {
     // Check if the student exist
     const { studentId } = req.params;
-    let homeworks = await Homework.find({student:studentId})
+    let homeworks = await Homework.find({"assignedToStudents.student":studentId})
     .populate('homeworkGivenByTeacher')
     .populate('sectionName')
     .populate('subName');
+    console.log(homeworks);
     if (homeworks.length) {
       let arr = [];
       homeworks.forEach(homework => {
