@@ -373,7 +373,7 @@ router.get(
       const queryObject = req.query;
 
       // See if Student Exists
-      let foundStudents = await Student.find(queryObject);
+      let foundStudents = await Student.find(queryObject).populate('sectionName');
       if (!foundStudents) {
         return res.status(400).json({ errors: [{ msg: "No Student exists" }] });
       }
@@ -397,7 +397,7 @@ router.get(
       const { id } = req.params;
 
       // See if Student Exists
-      let foundStudent = await Student.findById(id);
+      let foundStudent = await Student.findById(id).populate('sectionName');
       if (!foundStudent) {
         return res.status(400).json({ errors: [{ msg: "No Student exists" }] });
       }
