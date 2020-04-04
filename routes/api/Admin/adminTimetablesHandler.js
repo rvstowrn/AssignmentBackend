@@ -190,6 +190,8 @@ router.get("/timetableForStudents/:studentId", async (req, res) => {
   }
 });
 
+
+
 // router.get("/timetableForTeachers/:teacherId", async (req, res) => {
 //   const { teacherId } = req.params;
 //   try {
@@ -200,9 +202,6 @@ router.get("/timetableForStudents/:studentId", async (req, res) => {
 //       var arr=[];
 //       days.forEach(day=>{
 //         let t = timetable.find(el=>{})
-
-
-
 //       });
 
 
