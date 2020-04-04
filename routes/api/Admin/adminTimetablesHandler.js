@@ -188,61 +188,6 @@ router.get("/timetableForStudents/:studentId", async (req, res) => {
   }
 });
 
-
-
-
-router.get("/timetableForTeachers/:teacherId", async (req, res) => {
-  try {
-    // check if teacher exists
-    let { teacherId } = req.params;
-    var teacher = await Teacher.findById(teacherId);
-    let timetable = await Timetable.find({teacherTeaching:teacherId});
-    if (timetable) {
-      var arr=[];
-      timetable.timetableDetails.forEach(detail=>{
-        var obj={};
-        obj['dayName']=detail.dayName;
-        obj['slots']=[];
-        detail.slots.forEach(slot=>{
-          obj['sectionName']=timetable.sectionName;
-          obj['subName']=slot.subName.name;
-          obj['startTime']=slot.startTime;
-          obj['endTime']=slot.endTime;
-        });
-        arr.push(obj);
-      });
-      return res.send(arr);
-    } else {
-      return res.send("Timetable not set");
-    }
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server error");
-  }
-});
-
-
-
-
-// viewTimetable
-//    [
-// { 
-// dayName: 'monday', 
-// slots: [
-// { 
-//   subName: 'Math',
-//   sectionName: 'XI A', 
-//   startTime: '2012-12-04T8:00:00.000Z', 
-//   endTime: '2012-12-04T9:00:00.000Z' 
-// } 
-// ] 
-// }
-//    ]
-
-
-
-
-
 // router.get("/timetableForTeachers/:teacherId", async (req, res) => {
 //   const { teacherId } = req.params;
 //   try {
