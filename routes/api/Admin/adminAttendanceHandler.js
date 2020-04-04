@@ -156,12 +156,10 @@ router.get("/viewSectionAttendance/:sectionName/:month/:academicYear",
     // Check validity if sectionName and month spelling and academicYear validness
       
     var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    let gteDate = new Date(parseInt(academicYear),months.indexOf(month),1);
-    let lteDate = new Date(parseInt(academicYear),months.indexOf(month),31);
-    
-    let attendances = await Attendance.find({sectionName:sectionName,"date": {"$gte":gteDate,"$lte":lteDate}});
-  
-    if (attendances.length) {
+    let attendancemod = await Attendance.find({sectionName});
+    console.log(attendancemod);
+    let attendances = attendancemod.filter(el => { return (el.date.getMonth() == months.indexOf(month) && el.date.getFullYear()==academicYear);});
+    if (attendances || attendances.length) {
       var obj={};
       attendances[0].attendanceDetails.forEach(el=>{
         obj[el.student]=[];
