@@ -19,7 +19,7 @@ router.get("/", (req, res) => {
 router.post(
   "/login",
   [
-    check("email", "Email is required")
+    check("credential", "Email or Enrollment Number is required")
       .not()
       .isEmpty(),
     check("password", "Password is required")
@@ -36,7 +36,7 @@ router.post(
     }
 
     const {
-      email,
+      credential,
       password,
       type
     } = req.body;
@@ -46,10 +46,10 @@ router.post(
       var user;
       const salt = await bcrypt.genSalt(10);
       if(type=="student"){
-      	user = await Student.findOne({ email });
+      	user = await Student.findOne({ enrollmentNumber:credential });
       }
       else if(type=="teacher"){
-	    user = await Teacher.findOne({ email });
+	    user = await Teacher.findOne({ email:credential });
       }
 
       if(!user){

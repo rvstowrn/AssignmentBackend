@@ -1,8 +1,9 @@
-const router = require("express").Router(),
-      mongoose            = require('mongoose'),
-      Student             = require("../../../models/Users/Student");
+const router      = require("express").Router();
+const mongoose    = require('mongoose');
 const authStudent = require("../../../middleware/authStudent");      
-const Attendance = require("../../../models/Attendance/Attendance");
+const Student     = require("../../../models/Users/Student");
+const Attendance  = require("../../../models/Attendance/Attendance");
+const Timetable   = require("../../../models/Timetables/Timetables");
 
 // @route		GET api/student
 // @desc		Test Route
@@ -11,9 +12,9 @@ router.get("/", (req, res) => {
   res.send("Student");
 });
 
-// @route   Read api/admin/viewAttendanceOfAcademicYear/:studentId/:academicYear
+// @route   Read api/students/viewAttendanceOfAcademicYear/:academicYear
 // @desc    Gets Attendance for a given student and academic year
-// @access  Public
+// @access  Student
 router.get("/viewAttendanceOfAcademicYear/:academicYear",
   authStudent,
   async (req, res) => {
@@ -51,6 +52,42 @@ router.get("/viewAttendanceOfAcademicYear/:academicYear",
   }
 });
 
+
+// @route   Read api/students/subjectsAssignmentForStudent
+// @desc    Gets asignments for a given student and academic year
+// @access  Student
+router.get("/subjectsAssignmentForStudent",authStudent, async (req, res) => {
+  try {
+    // Check if the student exist
+    const studentId = req.user.user.id;
+    let assignments = await Assignment.find({"assignedToStudents.student":studentId})
+    .populate('assignmentGivenByTeacher')
+    .populate('sectionName')
+    .populate('subName');
+    if (assignments.length) {
+      let arr = [];
+      assignments.forEach(assignment => {
+        let {subName,sectionName,assignmentGivenByTeacher,assignmentDetails,dueDate,assignedToStudents} = assignment;
+        let s = assignedToStudents.find(el => {return el.student == studentId});
+        arr.push({subName: subName.name,sectionName:sectionName.name,assignmentGivenByTeacher:assignmentGivenByTeacher.name,
+          assignmentDetails:assignmentDetails,dueDate:dueDate,status:s.status,
+          marks:(s.marks || -1),totalMarks:(s.totalMarks || -1)});
+      });
+      return res.send(arr);
+    } else {
+      return res.send("No homework found for given student");
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+
+
+// @route   Read api/students/subjectsHomeworkForStudent
+// @desc    Gets homework for a given student and academic year
+// @access  Student
 router.get("/subjectsHomeWorkForStudent",
   authStudent,	
   async (req, res) => {
@@ -61,7 +98,6 @@ router.get("/subjectsHomeWorkForStudent",
     .populate('homeworkGivenByTeacher')
     .populate('sectionName')
     .populate('subName');
-    console.log(homeworks);
     if (homeworks.length) {
       let arr = [];
       homeworks.forEach(homework => {
