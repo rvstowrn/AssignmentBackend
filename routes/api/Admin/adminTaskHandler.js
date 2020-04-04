@@ -168,7 +168,32 @@ router.get("/readAssignments", async (req, res) => {
 });
 
 // Make route /subjectsAssignmentForStudent/:studentId
-
+router.get("/subjectsAssignmentForStudent/:studentId", async (req, res) => {
+  try {
+    // Check if the student exist
+    const { studentId } = req.params;
+    let assignments = await Assignment.find({"assignedToStudents.student":studentId})
+    .populate('assignmentGivenByTeacher')
+    .populate('sectionName')
+    .populate('subName');
+    if (assignments.length) {
+      let arr = [];
+      assignments.forEach(assignment => {
+        let {subName,sectionName,assignmentGivenByTeacher,assignmentDetails,dueDate,assignedToStudents} = assignment;
+        let s = assignedToStudents.find(el => {return el.student == studentId});
+        arr.push({subName: subName.name,sectionName:sectionName.name,assignmentGivenByTeacher:assignmentGivenByTeacher.name,
+          assignmentDetails:assignmentDetails,dueDate:dueDate,status:s.status,
+          marks:(s.marks || -1),totalMarks:(s.totalMarks || -1)});
+      });
+      return res.send(arr);
+    } else {
+      return res.send("No homework found for given student");
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
 
 
 // @route   POST api/admin/createHomeworks
