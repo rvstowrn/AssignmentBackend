@@ -5,7 +5,8 @@ const config = require("config");
 const jwt = require("jsonwebtoken");
 const Timetable = require("../../../models/Timetables/Timetables");
 const Section = require("../../../models/Section/Section");
-const Student = require("../../../models/Student/Student");
+const Student = require("../../../models/Users/Student");
+const Teacher = require("../../../models/Users/Teacher");
 
 
 // @route   POST api/admin/createTimetable
