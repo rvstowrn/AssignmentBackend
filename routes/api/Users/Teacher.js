@@ -637,4 +637,33 @@ router.get("/subjectsHomeWorkForStudent/:studentId",authTeacher, async (req, res
 
 
 
+router.get("/timetableForTeachers",
+  authTeacher,
+  async (req, res) => {
+  try {
+    const teacherId = req.user.user.id;
+    let timetables = await Timetable.find({"timetableDetails.slots.teacherTeaching":teacherId})
+    .populate('sectionName').populate('timetableDetails.slots.subName');
+    if (timetables.length) {
+      var obj = {"monday":[],"tuesday":[],"wednesday":[],"thursday":[],"friday":[],"saturday":[],"sunday":[]};
+      timetables.forEach(timetable=>{
+        timetable.timetableDetails.forEach(detail=>{
+          let reqslots = detail.slots.filter(slot=>{ slot.teacherTeaching.toString() == teacherId });
+          detail.slots.forEach(reqslot=>{
+            obj[detail.dayName].push({"subName":reqslot.subName.name,"sectionName":timetable.sectionName.name,
+            "startTime":reqslot.startTime,"endTime":reqslot.endTime});
+          });
+        });
+      });      
+      return res.send(obj);
+    } else {
+      return res.send({"msg":"Timetable not set"});
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+
 module.exports = router;

@@ -191,45 +191,34 @@ router.get("/timetableForStudents/:studentId", async (req, res) => {
 });
 
 
+router.get("/timetableForTeachers/:teacherId",
+  async (req, res) => {
+  try {
+    // check if teacher exists
 
-// router.get("/timetableForTeachers/:teacherId", async (req, res) => {
-//   const { teacherId } = req.params;
-//   try {
-//     // See if teacher exist
-//     let timetable = await Timetable.find({teacherTeaching:teacherId});
-//     if (timetable.length) {
-//       let days = ["monday", "tuesday","wednesday","thursday","friday","saturday","sunday"];
-//       var arr=[];
-//       days.forEach(day=>{
-//         let t = timetable.find(el=>{})
-//       });
-
-
-//       // var arr=[];
-//       // timetable.forEach(table=>{
-//       //   var obj={};
-//       //   table.timetableDetails.forEach(details=>{
-//       //     obj['dayName']=details.dayName;
-//       //     obj['slo']
-      
-//       //     details.slots.forEach(slot=>{
-            
-//       //       let t = slot.find(el => { return el.teacherTeaching == teacherId});
-
-
-
-//       //     });
-//       //   });
-//       // });
-//     } else {
-//       return res.send("No timetable found for given teacher");
-//     }
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(500).send("Server error");
-//   }
-
-// });
+    const {teacherId} = req.params;
+    let timetables = await Timetable.find({"timetableDetails.slots.teacherTeaching":teacherId})
+    .populate('sectionName').populate('timetableDetails.slots.subName');
+    if (timetables.length) {
+      var obj = {"monday":[],"tuesday":[],"wednesday":[],"thursday":[],"friday":[],"saturday":[],"sunday":[]};
+      timetables.forEach(timetable=>{
+        timetable.timetableDetails.forEach(detail=>{
+          let reqslots = detail.slots.filter(slot=>{ slot.teacherTeaching.toString() == teacherId });
+          detail.slots.forEach(reqslot=>{
+            obj[detail.dayName].push({"subName":reqslot.subName.name,"sectionName":timetable.sectionName.name,
+            "startTime":reqslot.startTime,"endTime":reqslot.endTime});
+          });
+        });
+      });      
+      return res.send(obj);
+    } else {
+      return res.send({"msg":"Timetable not set"});
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
 
 
 module.exports = router;
