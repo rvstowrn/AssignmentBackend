@@ -152,7 +152,8 @@ router.get(
       const queryObject = req.query;
 
       // See if Section Exists
-      let foundSectiones = await Section.find(queryObject).populate('teachersTeachingInThisSection.teacherId');
+      let foundSectiones = await Section.find(queryObject).populate('teachersTeachingInThisSection.teacherId', 
+      'teachersTeachingInThisSection.subject');
       if (!foundSectiones.length) {
         return res.status(400).json({ errors: [{ msg: "No section exists" }] });
       }
