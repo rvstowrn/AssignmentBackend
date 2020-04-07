@@ -129,5 +129,22 @@ router.get("/readStudentFee", async (req, res) => {
   }
 });
 
+router.get("/readStudentFee/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // See if Student Fee Exist
+    let studentFee = await StudentFee.find({ studentName: id }).populate("allFee.fee").populate("studentName");
+    if (studentFee.length) {
+      res.send(studentFee);
+    } else {
+      return res.send("No student fee found for given constraints");
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
 
 module.exports = router;
