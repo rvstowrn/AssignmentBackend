@@ -23,7 +23,7 @@ router.post("/createClassFee",
       return res.status(400).json({ errors: errors.array() });
     }
     const { sectionName, allFee }=req.body;
-    
+    res.send(sectionName, allFee);
     try {
     // See if Class Fee already exist
     let classFee = await ClassFee.find({ sectionName });
