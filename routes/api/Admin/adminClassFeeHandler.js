@@ -13,7 +13,7 @@ router.post("/createClassFee",
     check("sectionName", "Include Section name")
       .not()
       .isEmpty(),
-    check("feesCollection", "Include All fee")
+    check("allFee", "Include All fee")
       .not()
       .isEmpty()  
   ],
@@ -22,7 +22,8 @@ router.post("/createClassFee",
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const { sectionName, feesCollection }=req.body;
+    const { sectionName, allFee }=req.body;
+    
     try {
     // See if Class Fee already exist
     let classFee = await ClassFee.find({ sectionName });
@@ -31,7 +32,7 @@ router.post("/createClassFee",
         .status(400)
         .json({ errors: [{ msg: "Class Fee for given constraints already exists" }] });
     }
-    classfee = new ClassFee({ sectionName, allFee: feesCollection });
+    classfee = new ClassFee({ sectionName, allFee: allFee });
     await classFee.save();
     return res.send("Class fee added successfully");
   } catch (err) {
@@ -48,7 +49,7 @@ router.post("/updateClassFee/:id",
   check("sectionName", "Include Section name")
     .not()
     .isEmpty(),
-  check("feesCollection", "Include All fee")
+  check("allFee", "Include All fee")
     .not()
     .isEmpty()  
 ],
@@ -57,11 +58,11 @@ async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  const { sectionName, feesCollection }=req.body;
+  const { sectionName, allFee }=req.body;
   const { id } = req.params;
 
   try {
-    let classfee = await ClassFee.findByIdAndUpdate({ id }, { sectionName, allFee: feesCollection });
+    let classfee = await ClassFee.findByIdAndUpdate({ id }, { sectionName, allFee: allFee });
     if (classfee) {
       return res.send("class fee updated successfully");
     } else {
