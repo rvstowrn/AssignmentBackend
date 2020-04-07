@@ -30,6 +30,7 @@ app.use("/api/admin", require("./routes/api/Admin/adminUserHandler"));
 app.use("/api/admin", require("./routes/api/Admin/adminSubjectHandler"));
 app.use("/api/admin", require("./routes/api/Admin/adminFeesHandler"));
 app.use("/api/admin", require("./routes/api/Admin/adminClassFeeHandler"));
+app.use("/api/admin", require("./routes/api/Admin/adminStudentFeeHandler"));
 
 app.use("/api/students", require("./routes/api/Users/Student"));
 app.use("/api/teachers", require("./routes/api/Users/Teacher"));

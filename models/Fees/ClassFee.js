@@ -11,7 +11,7 @@ var classFeeSchema = new mongoose.Schema({
             fee: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Fee",
-                requitred: true
+                required: true
             },
             amount: Number
         }

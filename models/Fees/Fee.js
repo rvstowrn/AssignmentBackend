@@ -7,7 +7,7 @@ var feeSchema = new mongoose.Schema({
     },
     frequency: {
         type: String,
-        requitred: true
+        required: true
     },
     status: {
         type: String,
