@@ -32,12 +32,12 @@ router.post("/createClassFee",
         .status(400)
         .json({ errors: [{ msg: "Class Fee for given constraints already exists" }] });
     }
-    classfee = new ClassFee({ sectionName, allFee: allFee });
+    classfee = new ClassFee({ sectionName, allFee });
     await classFee.save();
     return res.send("Class fee added successfully");
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send("Server error" + err.message);
   }
 });
 
