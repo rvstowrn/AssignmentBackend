@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 
 var classFeeSchema = new mongoose.Schema({
-    section: {
+    sectionName: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Section",
         required: true

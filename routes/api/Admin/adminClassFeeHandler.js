@@ -24,20 +24,20 @@ router.post("/createClassFee",
     }
     const { sectionName, allFee }=req.body;
     
-    try {
-    // See if Class Fee already exist
-    let classFee = await ClassFee.find({ sectionName });
-    if (classFee.length) {
+    try { 
+    // See if Fee already exist
+    let fee = await ClassFee.find({ sectionName });
+    if (fee.length) {
       return res
         .status(400)
         .json({ errors: [{ msg: "Class Fee for given constraints already exists" }] });
     }
-    classfee = new ClassFee({ sectionName, allFee });
-    await classFee.save();
+    fee = new ClassFee({ sectionName, allFee });
+    await fee.save();
     return res.send("Class fee added successfully");
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error" + err.message);
+    res.status(500).send("Server error");
   }
 });
 
