@@ -104,7 +104,7 @@ router.get("/readClassFee", async (req, res) => {
     let qdata = req.query;
 
     // See if Attendance Exist
-    let classFee = await ClassFee.find(qdata);
+    let classFee = await ClassFee.find(qdata).populate("allFee.fee").populate("sectionName");
     if (classFee.length) {
       res.send(classFee);
     } else {
