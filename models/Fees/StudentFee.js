@@ -25,6 +25,21 @@ var studentFeeSchema = new mongoose.Schema({
             },
             amount: Number
         }
+    ],
+    feeListings: [
+        {
+            fee: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Fee",
+                required: true
+            },
+            monthYear: Date,
+            due: String,
+            amount: Number,
+            paid: Number,
+            balance: Number,
+            amountToPay: Number
+        }
     ]
 },
 {

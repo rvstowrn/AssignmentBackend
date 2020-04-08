@@ -28,7 +28,7 @@ router.post("/createStudentFee",
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const { studentName, monthYear, admissionNumber, allFee }=req.body;
+    const { studentName, monthYear, admissionNumber, allFee, feeListings }=req.body;
     
     try { 
     // See if Fee already exist
@@ -38,7 +38,7 @@ router.post("/createStudentFee",
         .status(400)
         .json({ errors: [{ msg: "Student Fee for given constraints already exists" }] });
     }
-    fee = new StudentFee({ studentName, monthYear, admissionNumber, allFee });
+    fee = new StudentFee({ studentName, monthYear, admissionNumber, allFee, feeListings });
     await fee.save();
     return res.send("Student fee added successfully");
   } catch (err) {
@@ -71,11 +71,11 @@ async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
   
-  const { studentName, monthYear, admissionNumber, allFee }=req.body;
+  const { studentName, monthYear, admissionNumber, allFee, feeListings }=req.body;
   const { id } = req.params;
 
   try {
-    let fee = await StudentFee.findByIdAndUpdate({ id }, { studentName, monthYear, admissionNumber, allFee });
+    let fee = await StudentFee.findByIdAndUpdate({ id }, { studentName, monthYear, admissionNumber, allFee, feeListings });
     if (fee) {
       return res.send("student fee updated successfully");
     } else {
@@ -117,7 +117,7 @@ router.get("/readStudentFee", async (req, res) => {
     let qdata = req.query;
     console.log("asds");
     // See if Student Fee Exist
-    let studentFee = await StudentFee.find(qdata).populate("allFee.fee").populate("studentName");
+    let studentFee = await StudentFee.find(qdata).populate("allFee.fee").populate("studentName").populate("feeListings.fee");
     if (studentFee.length) {
       res.send(studentFee);
     } else {
@@ -134,7 +134,7 @@ router.get("/readStudentFee/:id", async (req, res) => {
     const { id } = req.params;
 
     // See if Student Fee Exist
-    let studentFee = await StudentFee.find({ studentName: id }).populate("allFee.fee").populate("studentName");
+    let studentFee = await StudentFee.find({ studentName: id }).populate("allFee.fee").populate("studentName").populate("feeListings.fee");
     if (studentFee.length) {
       res.send(studentFee);
     } else {
