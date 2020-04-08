@@ -33,12 +33,12 @@ var studentFeeSchema = new mongoose.Schema({
                 ref: "Fee",
                 required: true
             },
+            amount: Number,
+            amountToPay: Number,
+            balance: Number,
             monthYear: Date,
             due: String,
-            amount: Number,
             paid: Number,
-            balance: Number,
-            amountToPay: Number
         }
     ]
 },

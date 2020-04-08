@@ -75,7 +75,7 @@ async (req, res) => {
   const { id } = req.params;
 
   try {
-    let fee = await StudentFee.findByIdAndUpdate({ id }, { studentName, monthYear, admissionNumber, allFee, feeListings });
+    let fee = await StudentFee.findOneAndUpdate({ studentName: id }, { studentName, monthYear, admissionNumber, allFee, feeListings });
     if (fee) {
       return res.send("student fee updated successfully");
     } else {
