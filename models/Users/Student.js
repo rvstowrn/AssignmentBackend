@@ -23,23 +23,24 @@ var studentSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    aadharNumber: String,
+    aadharNumber: {
+        type: String,
+        minlength: 16,
+        maxlength: 16
+    },
     accountNumber: String,
     SSSMID: String,
     photo: String,
     enrollmentNumber: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     rollNumber: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     password: {
-        type: String,
-        minlength: 6
+        type: String
     }
 });
 
