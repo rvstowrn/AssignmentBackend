@@ -288,7 +288,7 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.json({ errors: errors.array() });
+      return res.status(400).json({ errors: errors.array() });
     }
 
     const {
@@ -312,6 +312,7 @@ router.post(
       let oldStudent = await Student.findOne({ enrollmentNumber });
       if (oldStudent) {
         return res
+          .status(400)
           .json({ errors: [{ msg: "User already exists" }] });
       }
 
