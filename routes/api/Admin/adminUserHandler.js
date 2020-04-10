@@ -312,7 +312,6 @@ router.post(
       let oldStudent = await Student.findOne({ enrollmentNumber });
       if (oldStudent) {
         return res
-          .status(400)
           .json({ errors: [{ msg: "User already exists" }] });
       }
 
