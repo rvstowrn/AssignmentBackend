@@ -289,7 +289,7 @@ router.post(
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       // return res.json({ errors: errors.array() });
-      throw new Error({ errors: errors.array() });
+      throw new Error({ error: errors.array() });
     }
 
     const {
