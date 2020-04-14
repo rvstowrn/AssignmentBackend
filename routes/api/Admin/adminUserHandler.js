@@ -313,11 +313,11 @@ router.post(
       // See if Student Exists
       let oldStudent = await Student.findOne({ enrollmentNumber });
       if (oldStudent) {
-        throw new Error("User already exists");
-        // return res
-        //   .status(400)
-        //   .json({ errors: [{ msg: "User already exists" }] })
-          ;
+        
+        return res  
+          .status(400)
+          .json({ errors: [{ msg: "User already exists" }] })
+        ;
       }
 
       newStudent = new Student({
@@ -358,6 +358,7 @@ router.post(
         }
       );
     } catch (err) {
+      console.log(err)
       res.status(500).send("Server error");
     }
   }
@@ -475,6 +476,7 @@ router.put(
 
       const updatedStudent = await oldStudent.set({
         name,
+        sectionName,
         fatherName,
         motherName,
         address,
@@ -487,14 +489,7 @@ router.put(
         SSSMID
       });
 
-      // See if section Exists
-      let foundSection = await Section.findOne({ name: sectionName });
-      if (!foundSection) {
-        return res.status(400).json({ errors: [{ msg: "No section exists" }] });
-      }
-
-      updatedStudent.section = foundSection.id;
-
+    
       // Encrypt Password
       const salt = await bcrypt.genSalt(10);
       updatedStudent.password = await bcrypt.hash(password, salt);

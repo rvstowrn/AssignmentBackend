@@ -24,9 +24,7 @@ var studentSchema = new mongoose.Schema({
         required: true
     },
     aadharNumber: {
-        type: String,
-        minlength: 16,
-        maxlength: 16
+        type: String
     },
     accountNumber: String,
     SSSMID: String,
@@ -37,7 +35,8 @@ var studentSchema = new mongoose.Schema({
     },
     rollNumber: {
         type: String,
-        required: true
+        required: true,
+        unique: false
     },
     password: {
         type: String
