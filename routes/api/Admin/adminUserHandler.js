@@ -281,7 +281,6 @@ router.post(
     check("password", "Include password")
       .not()
       .isEmpty(),
-    check("aadharNumber", "Aadhar number must be of length 16").isLength({ min: 16, max: 16 }),
     check("password", "Min Password length is 6 and Max Password length is 20").isLength({ min: 6, max: 20 }),
   ],
 
@@ -314,9 +313,10 @@ router.post(
       // See if Student Exists
       let oldStudent = await Student.findOne({ enrollmentNumber });
       if (oldStudent) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: "User already exists" }] })
+        throw new Error("User already exists");
+        // return res
+        //   .status(400)
+        //   .json({ errors: [{ msg: "User already exists" }] })
           ;
       }
 
@@ -438,7 +438,10 @@ router.put(
     check("dob", "Include DOB")
       .not()
       .isEmpty(),
-    check("password", "Min Password length is 6").isLength({ min: 6 })
+      check("password", "Include password")
+        .not()
+        .isEmpty(),
+      check("password", "Min Password length is 6 and Max Password length is 20").isLength({ min: 6, max: 20 }),
   ],
   async (req, res) => {
     const errors = validationResult(req);
